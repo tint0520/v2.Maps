@@ -1,203 +1,33 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tint Maps 美業地圖 App</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0; 
-      height: 100%;
-      font-family: 'Noto Sans TC', sans-serif;
-      background-color: #fff3f7;
-      overflow: hidden;
-    }
-    #map {
-      height: 100%;
-      width: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 0;
-    }
-    .card-panel {
-      position: fixed;
-      bottom: 80px;
-      left: 0;
-      right: 0;
-      padding: 0 20px;
-      z-index: 10;
-      display: flex;
-      overflow-x: auto;
-      gap: 12px;
-      scroll-snap-type: x mandatory;
-    }
-    .card {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      padding: 16px;
-      min-width: 80%;
-      scroll-snap-align: start;
-      transition: all 0.3s ease;
-    }
-    .card h2 {
-      margin: 0 0 6px;
-      font-size: 18px;
-      color: #d63384;
-    }
-    .card .tags, .card .actions {
-      margin-top: 10px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .tag {
-      background: #fff0f5;
-      color: #d63384;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 13px;
-    }
-    .card .actions button {
-      background: #ffe0eb;
-      border: none;
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 14px;
-      color: #d63384;
-      cursor: pointer;
-    }
-    .nav-bar {
-      position: fixed;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      background: white;
-      padding: 10px 20px;
-      border-radius: 30px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      gap: 16px;
-      z-index: 20;
-    }
-    .nav-bar img {
-      width: 28px;
-      height: 28px;
-      cursor: pointer;
-    }
-    .top-controls {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .top-controls img {
-      width: 36px;
-      height: 36px;
-      background: white;
-      border-radius: 50%;
-      padding: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <div id="map"></div>
-  <div class="top-controls">
-    <img src="img/icons/icon-location.svg" onclick="goToMyLocation()" />
-    <img src="img/icons/icon-style.svg" onclick="toggleMapStyle()" />
-  </div>
-  <div class="card-panel" id="cardPanel"></div>
-  <div class="nav-bar">
-    <img src="img/icons/icon-map.svg" onclick="alert('地圖首頁')">
-    <img src="img/icons/icon-search.png" onclick="alert('開啟搜尋浮窗')">
-    <img src="img/icons/icon-heart.svg" onclick="alert('收藏頁')">
-    <img src="img/icons/icon-plus.svg" onclick="alert('Submit 店家頁')">
-  </div>
-  <script>
-    const stores = [
-       {
-        name: 'time nailart 好時質甲', type: '美甲 / 美睫', mode: '預約制', address: '台北市中山區', distance: '0.5 公里',
-        desc: '凝膠款式 / 日系設計 / 手部保養', latlng: [25.0301,121.5310]
-      },
-      {
-        name: '晴天美睫', type: '美睫', mode: '現場＋預約', address: '台北市大安區', distance: '1.2 公里',
-        desc: '自然款式 / 3D / 6D 濃密睫毛', latlng: [24.1542,120.6631]
-      },
-      {
-        name: 'LUMI 皮膚管理', type: '臉部保養', mode: '預約制', address: '台北市信義區', distance: '2.1 公里',
-        desc: '深層清潔＋毛孔管理', latlng: [24.1478,120.6739]
-      },
-      {
-        name: 'EZEY NAIL 潔甲製所', type: '美甲 / 美睫', mode: '預約制', address: '台北市中山區', distance: '0.5 公里',
-        desc: '凝膠款式 / 日系設計 / 手部保養', latlng: [25.034, 121.564]
-      },
-      {
-        name: 'Lumi 護膚所', type: '美睫', mode: '現場＋預約', address: '台北市大安區', distance: '1.2 公里',
-        desc: '自然款式 / 3D / 6D 濃密睫毛', latlng: [25.0328, 121.563]
-      },
-      {
-        name: 'TINT 指尖美學', type: '臉部保養', mode: '預約制', address: '台北市信義區', distance: '2.1 公里',
-        desc: '深層清潔＋毛孔管理', latlng: [25.031, 121.567]
+<html>
+  <head>
+    <title>地圖測試</title>
+    <meta charset="utf-8" />
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
       }
-    ];
-
-    let map;
-    function initMap() {
-      map = new google.maps.Map(document.getElementById("map"), {
-        center: { lat: 25.034, lng: 121.564 },
-        zoom: 14,
-        disableDefaultUI: true,
-        styles: [] // 可加入切換樣式
-      });
-      stores.forEach((s, i) => {
-        const m = new google.maps.Marker({
-          position: { lat: s.latlng[0], lng: s.latlng[1] },
-          map,
-          title: s.name
+      #map {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 25.03, lng: 121.56 },
+          zoom: 12,
         });
-        m.addListener('click', () => {
-          document.getElementById('cardPanel').scrollTo({ left: i * 320, behavior: 'smooth' });
-        });
-      });
-      renderCards();
-    }
-
-    function renderCards() {
-      const panel = document.getElementById('cardPanel');
-      panel.innerHTML = stores.map((s, i) => `
-        <div class="card">
-          <h2>${s.name}</h2>
-          <div class="tags">
-            <div class="tag">${s.type}</div>
-            <div class="tag">${s.mode}</div>
-            <div class="tag">${s.distance}</div>
-            <div class="tag">${s.address}</div>
-          </div>
-          <div style="margin-top: 6px; font-size: 13px; color: #444">${s.desc}</div>
-          <div class="actions">
-            <button>IG</button>
-            <button>LINE</button>
-            <button>導航</button>
-            <button>預約</button>
-          </div>
-        </div>
-      `).join('');
-    }
-    function goToMyLocation() {
-      alert("模擬：跳到使用者當前位置");
-    }
-    function toggleMapStyle() {
-      alert("模擬：切換地圖樣式");
-    }
-  </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLCB3EKFwsIqPwEEL_hxL7zluVpnzcCNM&callback=initMap" async defer></script>
-</body>
+      }
+    </script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLCB3EKFwsIqPwEEL_hxL7zluVpnzcCNM&callback=initMap"
+      async
+      defer
+    ></script>
+  </body>
 </html>
